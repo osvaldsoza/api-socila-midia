@@ -2,9 +2,7 @@ package br.com.osvaldsoza.resource;
 
 import br.com.osvaldsoza.dto.CreateUserRequest;
 import br.com.osvaldsoza.dto.ResponseError;
-import br.com.osvaldsoza.dto.UpdateUserRequest;
 import br.com.osvaldsoza.service.UserService;
-import br.com.osvaldsoza.util.StatusCode;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -23,7 +21,6 @@ public class UserResource {
 
     private UserService userService;
     private Validator validator;
-    private Set<ConstraintViolation<CreateUserRequest>> violations;
 
     @Inject
     public UserResource(UserService userService, Validator validator) {
@@ -50,14 +47,13 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
-    public Response updateUser(@PathParam("id") Long id, UpdateUserRequest userRequest) {
-        userRequest.setId(id);
-        Set<ConstraintViolation<UpdateUserRequest>> violations = validator.validate(userRequest);
+    public Response updateUser(@PathParam("id") Long id, CreateUserRequest userRequest) {
+        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()) {
             return ResponseError.createFromValidation(violations)
                     .withStatusCode(UNPROCESSABLE_ENTITY.getStatusCode());
         }
-        var user = userService.updateUser(userRequest);
+        var user = userService.updateUser(id,userRequest);
         if (user != null) {
             return Response.ok().build();
         } else {

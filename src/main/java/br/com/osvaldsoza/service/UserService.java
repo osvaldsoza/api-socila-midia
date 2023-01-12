@@ -1,9 +1,9 @@
 package br.com.osvaldsoza.service;
 
 import br.com.osvaldsoza.dto.CreateUserRequest;
-import br.com.osvaldsoza.dto.UpdateUserRequest;
 import br.com.osvaldsoza.model.User;
 import br.com.osvaldsoza.repository.UseRepository;
+import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,12 +16,12 @@ public class UserService {
     private UseRepository useRepository;
 
     @Inject
-    public UserService(UseRepository useRepository){
+    public UserService(UseRepository useRepository) {
         this.useRepository = useRepository;
     }
 
     public List<User> listUsers() {
-        return useRepository.listAll();
+        return useRepository.listAll(Sort.by("name"));
     }
 
     @Transactional
@@ -34,8 +34,8 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(UpdateUserRequest userRequest) {
-        User user = useRepository.findById(userRequest.getId());
+    public User updateUser(Long id, CreateUserRequest userRequest) {
+        User user = useRepository.findById(id);
         if (user != null) {
             user.setName(userRequest.getName());
             user.setAge(userRequest.getAge());
