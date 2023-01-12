@@ -1,6 +1,7 @@
 package br.com.osvaldsoza.service;
 
 import br.com.osvaldsoza.dto.CreateUserRequest;
+import br.com.osvaldsoza.dto.UpdateUserRequest;
 import br.com.osvaldsoza.model.User;
 import br.com.osvaldsoza.repository.UseRepository;
 
@@ -33,8 +34,8 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, CreateUserRequest userRequest) {
-        User user = useRepository.findById(id);
+    public User updateUser(UpdateUserRequest userRequest) {
+        User user = useRepository.findById(userRequest.getId());
         if (user != null) {
             user.setName(userRequest.getName());
             user.setAge(userRequest.getAge());

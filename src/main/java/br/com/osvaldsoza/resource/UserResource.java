@@ -2,6 +2,7 @@ package br.com.osvaldsoza.resource;
 
 import br.com.osvaldsoza.dto.CreateUserRequest;
 import br.com.osvaldsoza.dto.ResponseError;
+import br.com.osvaldsoza.dto.UpdateUserRequest;
 import br.com.osvaldsoza.service.UserService;
 import br.com.osvaldsoza.util.StatusCode;
 
@@ -38,7 +39,7 @@ public class UserResource {
 
     @POST
     public Response createUser(CreateUserRequest userRequest) {
-        violations = validator.validate(userRequest);
+        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()) {
             return ResponseError.createFromValidation(violations)
                     .withStatusCode(UNPROCESSABLE_ENTITY.getStatusCode());
@@ -49,13 +50,14 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
-    public Response updateUser(@PathParam("id") Long id, CreateUserRequest userRequest) {
-        violations = validator.validate(userRequest);
+    public Response updateUser(@PathParam("id") Long id, UpdateUserRequest userRequest) {
+        userRequest.setId(id);
+        Set<ConstraintViolation<UpdateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()) {
             return ResponseError.createFromValidation(violations)
                     .withStatusCode(UNPROCESSABLE_ENTITY.getStatusCode());
         }
-        var user = userService.updateUser(id, userRequest);
+        var user = userService.updateUser(userRequest);
         if (user != null) {
             return Response.ok().build();
         } else {
