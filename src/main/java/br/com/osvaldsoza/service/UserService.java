@@ -8,6 +8,7 @@ import io.quarkus.panache.common.Sort;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 
 @ApplicationScoped
@@ -34,23 +35,22 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, CreateUserRequest userRequest) {
+    public void updateUser(Long id, CreateUserRequest userRequest) {
         User user = useRepository.findById(id);
-        if (user != null) {
-            user.setName(userRequest.getName());
-            user.setAge(userRequest.getAge());
-            useRepository.persist(user);
+        if (user == null) {
+            throw new NotFoundException();
         }
-        return user;
+        user.setName(userRequest.getName());
+        user.setAge(userRequest.getAge());
+        useRepository.persist(user);
     }
 
     @Transactional
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         User user = useRepository.findById(id);
-        if (user != null) {
-            useRepository.delete(user);
-            return true;
+        if (user == null) {
+            throw new NotFoundException();
         }
-        return false;
+        useRepository.delete(user);
     }
 }

@@ -53,22 +53,14 @@ public class UserResource {
             return ResponseError.createFromValidation(violations)
                     .withStatusCode(UNPROCESSABLE_ENTITY.getStatusCode());
         }
-        var user = userService.updateUser(id,userRequest);
-        if (user != null) {
-            return Response.ok().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        userService.updateUser(id, userRequest);
+        return Response.ok().build();
     }
 
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
-        var userDeleted = userService.deleteUser(id);
-        if (userDeleted) {
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        userService.deleteUser(id);
+        return Response.noContent().build();
     }
 }

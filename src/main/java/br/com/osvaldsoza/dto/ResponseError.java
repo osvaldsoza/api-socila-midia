@@ -1,5 +1,7 @@
 package br.com.osvaldsoza.dto;
 
+import lombok.Data;
+
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Data
 public class ResponseError {
 
     private String message;
@@ -30,21 +33,5 @@ public class ResponseError {
 
     public Response withStatusCode(Integer statusCode){
         return Response.status(statusCode).entity(this).build();
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Collection<FieldError> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(Collection<FieldError> errors) {
-        this.errors = errors;
     }
 }
