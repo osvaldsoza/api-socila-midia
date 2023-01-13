@@ -1,6 +1,7 @@
 package br.com.osvaldsoza.resource;
 
 import br.com.osvaldsoza.dto.CreatePostRequest;
+import br.com.osvaldsoza.dto.PostResponse;
 import br.com.osvaldsoza.dto.ResponseError;
 import br.com.osvaldsoza.model.Post;
 import br.com.osvaldsoza.service.PostService;
@@ -33,15 +34,15 @@ public class PostResource {
 
     @GET
     public Response listPosts() {
-        List<Post> posts = postService.listPosts();
+        List<PostResponse> posts = postService.listPosts();
         return Response.ok(posts).build();
     }
 
     @GET
     @Path("user/{userId}")
     public Response listPosts(@PathParam("userId") Long userId) {
-        List<Post> posts = postService.listPostsbyUser(userId);
-        return Response.ok(posts).build();
+        List<PostResponse> postResponseList = postService.listPostsbyUser(userId);
+        return Response.ok(postResponseList).build();
     }
 
     @POST

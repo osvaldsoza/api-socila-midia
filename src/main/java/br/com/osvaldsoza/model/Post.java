@@ -22,4 +22,9 @@ public class Post {
 
     @CreationTimestamp
     private LocalDateTime dateTime;
+
+//    @PrePersist
+//    private  void prePersist(){
+//        setDateTime(LocalDateTime.now());
+//    }
 }

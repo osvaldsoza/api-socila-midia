@@ -1,16 +1,19 @@
 package br.com.osvaldsoza.service;
 
 import br.com.osvaldsoza.dto.CreatePostRequest;
+import br.com.osvaldsoza.dto.PostResponse;
 import br.com.osvaldsoza.model.Post;
 import br.com.osvaldsoza.model.User;
 import br.com.osvaldsoza.repository.PostRepository;
 import br.com.osvaldsoza.repository.UseRepository;
+import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PostService {
@@ -24,16 +27,25 @@ public class PostService {
         this.useRepository = useRepository;
     }
 
-    public List<Post> listPosts() {
-        return postRepository.findAll().stream().toList();
+    public List<PostResponse> listPosts() {
+        return postRepository.findAll(Sort.by("dateTime", Sort.Direction.Descending))
+                .stream()
+                .map(PostResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public List<Post> listPostsbyUser(Long userId) {
+    public List<PostResponse> listPostsbyUser(Long userId) {
         User user = useRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException();
         }
-        return postRepository.find("user_id = ?1", user.getId()).stream().toList();
+        var postResponseList = postRepository.find("user",
+                        Sort.by("dateTime", Sort.Direction.Descending), user)
+                .list()
+                .stream()
+                .map(post -> PostResponse.fromEntity(post))
+                .collect(Collectors.toList());
+        return postResponseList;
     }
 
     @Transactional
